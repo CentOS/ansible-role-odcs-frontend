@@ -1,2 +1,99 @@
-# Defaults tasks for
-role odcs-frontend
+---
+- name: install the packages required for ODCS
+  yum:
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+    use_backend: yum
+  vars:
+    packages:
+    - odcs
+    - mod_auth_gssapi
+    - mod_wsgi
+    - python-qpid-proton
+    - python2-rhmsg
+    - python-psycopg2
+  tags:
+  - odcs
+
+- name: install the latest ODCS package
+  yum:
+    name: odcs
+    state: latest
+    update_cache: yes
+    use_backend: yum
+  when: odcs_upgrade
+  notify:
+  - restart httpd service
+  tags:
+  - odcs
+
+########
+# Need to add the messaging part
+
+- name: modify selinux so that httpd can serve data from NFS shares if needed
+  seboolean: 
+    name: httpd_use_nfs
+    state: yes
+    persistent: yes
+  when: "'enabled' in ansible_selinux.status"
+  tags:
+  - odcs
+
+- name: Add apache user to odcs-server group.	
+  user:	
+    name: apache	
+    groups: odcs-server	
+    append: yes
+
+- name: create ODCS_TARGET_DIR
+  file:
+    path: "{{ odcs_target_dir }}"
+    state: directory
+    owner: odcs-server
+    group: odcs-server
+    mode: 0775
+  tags:
+  - odcs
+
+- name: generate the ODCS app config
+  template:
+    src: etc/odcs/config.py.j2
+    dest: /etc/odcs/config.py
+    owner: odcs-server
+    group: odcs-server
+    mode: 0440
+  notify:
+  - reload httpd service
+  tags:
+  - odcs
+
+- name: generate the ODCS Apache config
+  template:
+    src: etc/httpd/conf.d/odcs.conf.j2
+    dest: /etc/httpd/conf.d/odcs.conf
+    owner: apache
+    group: apache
+    mode: 0440
+  notify:
+  - reload httpd service
+  tags:
+  - odcs
+
+- name: Disable PrivateTmp=true in httpd.service.
+  lineinfile:
+    path: /usr/lib/systemd/system/httpd.service
+    regexp: '^PrivateTmp'
+    line: 'PrivateTmp=false'
+  notify:
+  - reload systemd
+  - restart httpd service
+  tags:
+  - odcs
+
+- name: start ODCS frontend
+  systemd:
+    name: httpd
+    state: started
+  tags:
+  - odcs

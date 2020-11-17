@@ -1,0 +1,87 @@
+{% if odcs_force_ssl %}
+# Force SSL
+RewriteEngine On
+# allow http access for zabbix status checks
+RewriteCond %{REQUEST_URI} !=/server-status
+RewriteCond %{HTTPS} off
+RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
+{% endif %}
+
+WSGIDaemonProcess odcs user=odcs group=fedmsg threads=5
+WSGIScriptAlias /{{ odcs_endpoint }} /usr/share/odcs/odcs.wsgi
+
+# By default, do not require SSL verification.
+SSLVerifyClient none
+SSLCACertificateFile /etc/pki/tls/certs/ca-bundle.crt
+
+<Directory /usr/share/odcs>
+    WSGIProcessGroup odcs
+    WSGIApplicationGroup %{GLOBAL}
+
+    {% if odcs_allowed_named_hosts or odcs_allowed_hosts %}
+    <RequireAny>
+        Require method GET
+        {{ 'Require host ' ~ odcs_allowed_named_hosts|join(' ') if odcs_allowed_named_hosts else '' }}
+
+        {{ 'Require ip ' ~ odcs_allowed_hosts|join(' ') if odcs_allowed_hosts else '' }}
+
+    </RequireAny>
+    {% endif %}
+
+    {% if odcs_auth_backend == "kerberos" or odcs_auth_backend == "kerberos_or_ssl" %}
+    AuthType GSSAPI
+    AuthName "Kerberos negotiate authentication based on GSSAPI"
+    GssapiCredStore keytab:/etc/httpd/conf/httpd.keytab
+    {% endif %}
+
+    {% if odcs_auth_backend == "kerberos_or_ssl" or odcs_auth_backend == "ssl" %}
+    SSLVerifyClient optional
+    SSLVerifyDepth 10
+    SSLOptions +stdEnvVars
+    {% endif %}
+
+    <RequireAny>
+        {% if odcs_auth_backend == "kerberos" or odcs_auth_backend == "kerberos_or_ssl" %}
+        Require valid-user
+        {% endif %}
+
+        {% if odcs_auth_backend == "kerberos_or_ssl" or odcs_auth_backend == "ssl" %}
+        Require ssl-verify-client
+        {% endif %}
+
+        {% if odcs_auth_backend == "noauth" and not odcs_allowed_named_hosts and not odcs_allowed_hosts %}
+        Require all granted
+        {% endif %}
+    </RequireAny>
+
+</Directory>
+
+Alias "/composes" "{{ odcs_target_dir }}"
+<Directory {{ odcs_target_dir }}>
+    {% if odcs_allowed_named_hosts or odcs_allowed_hosts %}
+    <RequireAny>
+        Require method GET
+        {{ 'Require host ' ~ odcs_allowed_named_hosts|join(' ') if odcs_allowed_named_hosts else '' }}
+
+        {{ 'Require ip ' ~ odcs_allowed_hosts|join(' ') if odcs_allowed_hosts else '' }}
+
+    </RequireAny>
+    {% else %}
+    Require all granted
+    {% endif %}
+
+    Options +Indexes
+    IndexOptions NameWidth=* FancyIndexing
+</Directory>
+
+# Enable access to metrics to unauthenticated users
+<Location "/api/1/metrics">
+  SSLVerifyClient none
+  Require all granted
+</Location>
+
+# to enable zabbix apache stats collection
+<Location "/server-status">
+   Require all granted
+   Require ip 127.0.0.1
+</Location>
