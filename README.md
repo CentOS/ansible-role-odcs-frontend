@@ -4,8 +4,7 @@ This odcs-frontend role is used in the CentOS Infra.
 It surely depends (see dependencies below) on some other roles.
 
 See also
-[ansible-infra-playbooks](https://github.com/CentOS/ansible-infra-playboo=
-ks)
+[ansible-infra-playbooks](https://github.com/CentOS/ansible-infra-playbooks)
 directory to see how the tree/structure is organized
 
 ### Variables
@@ -18,8 +17,7 @@ dynamically included/imported:
   * Or each <task>.yml under tasks folder for included/imported roles
 
 All those roles are declared in our
-[requirements.yml](https://github.com/CentOS/ansible-infra-playbooks/blob=
-/master/requirements-production.yml)
+[requirements.yml](https://github.com/CentOS/ansible-infra-playbooks/blob/master/requirements-production.yml)
 file.
 
 ### License
