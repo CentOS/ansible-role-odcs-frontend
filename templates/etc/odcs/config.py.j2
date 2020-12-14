@@ -79,10 +79,6 @@ class ProdConfiguration(BaseConfiguration):
     ALLOWED_CLIENTS = {{ odcs_allowed_clients }}
     ADMINS = {{ odcs_admins }}
 
-    PULP_SERVER_URL = "{{ odcs_pulp_server_url }}"
-    PULP_USERNAME = "{{ odcs_pulp_username }}"
-    PULP_PASSWORD = "{{ odcs_pulp_password }}"
-
 {% if odcs_allowed_source_types %}
     ALLOWED_SOURCE_TYPES = {{ odcs_allowed_source_types }}
 {% endif %}

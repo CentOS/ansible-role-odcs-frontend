@@ -3,8 +3,8 @@
 - name: reload systemd
   command: systemctl daemon-reload
 
-- name: restart apache
+- name: restart httpd service
   command: /usr/local/bin/conditional-restart.sh httpd httpd
 
-- name: reload apache
+- name: reload httpd service
   action: service name=httpd state=reloaded

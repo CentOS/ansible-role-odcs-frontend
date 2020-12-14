@@ -1,6 +1,22 @@
 # Defaults tasks for role odcs-frontend
 
 ---
+
+- name: install the EPEL packages required for ODCS backend
+  yum:
+    name: "epel-release"
+    state: present
+  tags:
+  - odcs
+
+- name: Use the Fedora infra repo
+  copy:
+    src: infrastructure.repo
+    dest: /etc/yum.repos.d/infrastructure.repo
+    mode: 0644
+    owner: root
+    group: root
+
 - name: install the packages required for ODCS
   yum:
     name: "{{ packages }}"
@@ -12,8 +28,9 @@
     - odcs
     - mod_auth_gssapi
     - mod_wsgi
+    - mod_ssl
     - python-qpid-proton
-    - python2-rhmsg
+    - fedora-messaging
     - python-psycopg2
   tags:
   - odcs
@@ -41,6 +58,18 @@
   when: "'enabled' in ansible_selinux.status"
   tags:
   - odcs
+
+- name: create odcs-server group
+  group:
+    name: odcs-server
+    gid: 64321
+    state: present
+ 
+- name: create odcs-server user
+  user:
+    name: odcs-server
+    uid: 64321
+    group: odcs-server
 
 - name: Add apache user to odcs-server group.	
   user:	
@@ -99,4 +128,3 @@
     state: started
   tags:
   - odcs
->>>>>>> 6fd54e0 (First attempt at ODCS frontend)
