@@ -111,6 +111,98 @@
   tags:
   - odcs
 
+- name: copy the odcs rabbitmq private queue crt.
+  copy:
+    src: "{{pkistore}}/rabbitmq-private/centos-odcs-private-queue.crt"
+    dest: /etc/odcs/odcs-private-queue.crt
+    owner: odcs-server
+    mode: 0640
+  tags:
+  - odcs
+ 
+- name: copy the odcs rabbitmq private queue key.
+  copy:
+    src: "{{pkistore}}/rabbitmq-private/centos-odcs-private-queue.key"
+    dest: /etc/odcs/odcs-private-queue.key
+    owner: odcs-server
+    mode: 0640
+  tags:
+  - odcs
+
+- name: copy the odcs rabbitmq crt.
+  copy:
+    src: "{{pkistore}}/fedora-messaging/odcs/centos-odcs.crt"
+    dest: /etc/odcs/odcs-rabbitmq.crt
+    owner: odcs-server
+    mode: 0640
+  tags:
+  - odcs
+ 
+- name: copy the odcs rabbitmq key.
+  copy:
+    src: "{{pkistore}}/fedora-messaging/odcs/centos-odcs.key"
+    dest: /etc/odcs/odcs-rabbitmq.key
+    owner: odcs-server
+    mode: 0640
+  tags:
+  - odcs
+ 
+- name: copy the odcs rabbitmq CA cert.
+  copy:
+    src: "{{pkistore}}/fedora-messaging/ca.crt"
+    dest: /etc/odcs/ca.crt
+    owner: odcs-server
+    group: apache
+    mode: 0640
+  tags:
+  - odcs
+
+- name: generate the fedora-messaging config
+  template:
+    src: fedora-messaging.toml.j2
+    dest: /etc/fedora-messaging/config.toml
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+  - odcs
+
+- name: install the httpd TLS cert
+  copy:
+    src: "{{pkistore}}/{{ ansible_fqdn }}.crt"
+    dest: /etc/pki/tls/certs/localhost.crt
+    owner: apache
+    group: apache
+    mode: 0440
+  notify:
+  - reload httpd service
+  tags:
+  - odcs
+
+- name: install the httpd TLS key
+  copy:
+    src: "{{pkistore}}/{{ ansible_fqdn }}.key"
+    dest: /etc/pki/tls/private/localhost.key
+    owner: apache
+    group: apache
+    mode: 0440
+  notify:
+  - reload httpd service
+  tags:
+  - odcs
+
+- name: install the httpd TLS key
+  copy:
+    src: "{{pkistore}}/fas_ca_cert-prod.crt"
+    dest: /etc/pki/tls/certs/fas-ca.crt
+    owner: apache
+    group: apache
+    mode: 0440
+  notify:
+  - reload httpd service
+  tags:
+  - odcs
+
 - name: Disable PrivateTmp=true in httpd.service.
   lineinfile:
     path: /usr/lib/systemd/system/httpd.service

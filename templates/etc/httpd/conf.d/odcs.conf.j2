@@ -12,7 +12,8 @@ WSGIScriptAlias /{{ odcs_endpoint }} /usr/share/odcs/odcs.wsgi
 
 # By default, do not require SSL verification.
 SSLVerifyClient none
-SSLCACertificateFile /etc/pki/tls/certs/ca-bundle.crt
+SSLCACertificateFile /etc/pki/tls/certs/fas-ca.crt
+SSLUserName SSL_CLIENT_S_DN_CN
 
 <Directory /usr/share/odcs>
     WSGIProcessGroup odcs

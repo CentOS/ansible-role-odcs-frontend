@@ -72,9 +72,9 @@ class ProdConfiguration(BaseConfiguration):
     MESSAGING_CERT_FILE = "/etc/ssl/odcs/umb-client.crt"
     MESSAGING_KEY_FILE = "/etc/ssl/odcs/umb-client.key"
     MESSAGING_CA_CERT = "{{ odcs_messaging_ca_cert }}"
-    MESSAGING_TOPIC_PREFIX = "{{ odcs_messaging_topic_prefix }}"
-    MESSAGING_TOPIC = "VirtualTopic.eng.odcs.state.change"
-    INTERNAL_MESSAGING_TOPIC = "VirtualTopic.eng.odcs.internal.msg"
+    MESSAGING_TOPIC_PREFIX = "org.centos.prod."
+    MESSAGING_TOPIC = "odcs.compose.state-changed"
+    INTERNAL_MESSAGING_TOPIC = "odcs.internal.msg"
 
     ALLOWED_CLIENTS = {{ odcs_allowed_clients }}
     ADMINS = {{ odcs_admins }}
@@ -109,12 +109,15 @@ class ProdConfiguration(BaseConfiguration):
     MAX_SECONDS_TO_LIVE = {{ odcs_max_seconds_to_live }}
 
 {% if odcs_celery_broker_host %}
-    CELERY_BROKER_URL = "amqps://{{ odcs_celery_broker_username }}:{{ odcs_celery_broker_password }}@{{ odcs_celery_broker_host }}:{{ odcs_celery_broker_port }}/{{ odcs_celery_broker_vhost }}"
+    CELERY_BROKER_URL = "amqps://{{ odcs_celery_broker_username }}:{{ odcs_celery_broker_password }}@{{ odcs_celery_broker_host }}/{{ odcs_celery_broker_vhost }}"
+    CELERY_CONFIG = { 
+        'certfile': "/etc/odcs/odcs-private-queue.crt",
+        'keyfile': "/etc/odcs/odcs-private-queue.key",
+        'ca_certs': "/etc/odcs/ca.crt",
+        'broker_login_method': "EXTERNAL",
+    } 
 {% endif %}
 
-    CELERY_CONFIG = {
-        "server_hostname": True,
-    }
 
 {% if odcs_celery_router_config %}
     CELERY_ROUTER_CONFIG = {{ odcs_celery_router_config }}

@@ -1,0 +1,14 @@
+# A sample configuration for fedora-messaging. This file is in the TOML format.
+# For complete details on all configuration options, see the documentation.
+
+amqp_url = "amqps://centos-odcs:@rabbitmq.fedoraproject.org/%2Fpubsub"
+
+topic_prefix = "org.centos.prod"
+
+[tls]
+ca_cert = "/etc/odcs/ca.crt"
+keyfile = "/etc/odcs/odcs-rabbitmq.key"
+certfile = "/etc/odcs/odcs-rabbitmq.crt"
+
+[client_properties]
+app = "odcs"
