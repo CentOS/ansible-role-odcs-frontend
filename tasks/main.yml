@@ -45,6 +45,11 @@
   tags:
   - odcs
 
+- include_role:
+    name: httpd
+  vars:
+    - httpd_tls: True
+
 ########
 # Need to add the messaging part
 
@@ -165,10 +170,23 @@
   tags:
   - odcs
 
+- name: install the http keytab
+  copy:
+    src: "{{pkistore}}/odcs/http-{{ odcs_frontend_hostname }}"
+    dest: "/etc/httpd/conf/http-{{ odcs_frontend_hostname }}.keytab"
+    owner: apache
+    group: apache
+    mode: 0440
+  when: odcs_auth_backend == "kerberos" or odcs_auth_backend == "kerberos_or_ssl"
+  notify:
+  - reload httpd service
+  tags:
+  - odcs
+
 - name: install the httpd TLS cert
   copy:
-    src: "{{pkistore}}/{{ hostname }}.crt"
-    dest: /etc/pki/tls/certs/localhost.crt
+    src: "{{pkistore}}/{{ odcs_frontend_hostname }}.crt"
+    dest: "/etc/pki/tls/certs/{{ odcs_frontend_hostname }}.crt"
     owner: apache
     group: apache
     mode: 0440
@@ -179,8 +197,8 @@
 
 - name: install the httpd TLS key
   copy:
-    src: "{{pkistore}}/{{ hostname }}.key"
-    dest: /etc/pki/tls/private/localhost.key
+    src: "{{pkistore}}/{{ odcs_frontend_hostname }}.key"
+    dest: "/etc/pki/tls/private/{{ odcs_frontend_hostname }}.key"
     owner: apache
     group: apache
     mode: 0440
@@ -189,10 +207,10 @@
   tags:
   - odcs
 
-- name: install the httpd TLS key
+- name: install any CAs
   copy:
-    src: "{{pkistore}}/fas_ca_cert-prod.crt"
-    dest: /etc/pki/tls/certs/fas-ca.crt
+    src: "{{pkistore}}/{{ odcs_frontend_ca_crt}}"
+    dest: "/etc/pki/tls/certs/{{ odcs_frontend_ca_crt }}"
     owner: apache
     group: apache
     mode: 0440

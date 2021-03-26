@@ -4,7 +4,7 @@
   command: systemctl daemon-reload
 
 - name: restart httpd service
-  command: /usr/local/bin/conditional-restart.sh httpd httpd
+  action: service name=httpd state=restarted
 
 - name: reload httpd service
   action: service name=httpd state=reloaded

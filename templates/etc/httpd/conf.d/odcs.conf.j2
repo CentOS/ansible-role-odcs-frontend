@@ -10,10 +10,28 @@ RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
 WSGIDaemonProcess odcs user=odcs-server group=apache threads=5
 WSGIScriptAlias /{{ odcs_endpoint }} /usr/share/odcs/odcs.wsgi
 
+ErrorLog logs/ssl_error_log
+TransferLog logs/ssl_access_log
+LogLevel warn
+
+SSLEngine on
+SSLHonorCipherOrder on
+
+SSLProtocol all -SSLv2 -SSLv3
+
+SSLCipherSuite ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:+LOW:!aNULL:!eNULL:!DES:!MD5:!PSK:!RC4
+
+SSLCertificateFile /etc/pki/tls/certs/{{ odcs_frontend_hostname }}.crt
+SSLCertificateKeyFile /etc/pki/tls/private/{{ odcs_frontend_hostname }}.key
+SSLCertificateChainFile /etc/pki/tls/certs/{{ odcs_frontend_ca_crt }}
+
+
+{% if odcs_auth_backend == 'ssl' or odcs_auth_backend == 'kerberos_or_ssl' %}
 # By default, do not require SSL verification.
 SSLVerifyClient none
 SSLCACertificateFile /etc/pki/tls/certs/fas-ca.crt
 SSLUserName SSL_CLIENT_S_DN_CN
+{% endif %}
 
 <Directory /usr/share/odcs>
     WSGIProcessGroup odcs
@@ -32,7 +50,7 @@ SSLUserName SSL_CLIENT_S_DN_CN
     {% if odcs_auth_backend == "kerberos" or odcs_auth_backend == "kerberos_or_ssl" %}
     AuthType GSSAPI
     AuthName "Kerberos negotiate authentication based on GSSAPI"
-    GssapiCredStore keytab:/etc/httpd/conf/httpd.keytab
+    GssapiCredStore keytab:/etc/httpd/conf/http-{{ odcs_frontend_hostname }}.keytab
     {% endif %}
 
     {% if odcs_auth_backend == "kerberos_or_ssl" or odcs_auth_backend == "ssl" %}
