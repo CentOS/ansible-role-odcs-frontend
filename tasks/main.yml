@@ -3,7 +3,7 @@
 ---
 
 - name: install the EPEL packages required for ODCS backend
-  yum:
+  package:
     name: "epel-release"
     state: present
   tags:
@@ -18,29 +18,27 @@
     group: root
 
 - name: install the packages required for ODCS
-  yum:
+  package:
     name: "{{ packages }}"
     state: present
     update_cache: yes
-    use_backend: yum
   vars:
     packages:
     - odcs
     - mod_auth_gssapi
     - mod_wsgi
     - mod_ssl
-    - python-qpid-proton
+    - python3-qpid-proton
     - fedora-messaging
-    - python-psycopg2
+    - python3-psycopg2
   tags:
   - odcs
 
 - name: install the latest ODCS package
-  yum:
+  package:
     name: odcs
     state: latest
     update_cache: yes
-    use_backend: yum
   when: odcs_upgrade
   notify:
   - restart httpd service
@@ -169,7 +167,7 @@
 
 - name: install the httpd TLS cert
   copy:
-    src: "{{pkistore}}/{{ ansible_fqdn }}.crt"
+    src: "{{pkistore}}/{{ hostname }}.crt"
     dest: /etc/pki/tls/certs/localhost.crt
     owner: apache
     group: apache
@@ -181,7 +179,7 @@
 
 - name: install the httpd TLS key
   copy:
-    src: "{{pkistore}}/{{ ansible_fqdn }}.key"
+    src: "{{pkistore}}/{{ hostname }}.key"
     dest: /etc/pki/tls/private/localhost.key
     owner: apache
     group: apache
