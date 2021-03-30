@@ -53,6 +53,17 @@
 ########
 # Need to add the messaging part
 
+- name: set selinux booleans for httpd
+  seboolean: 
+    name: "{{ item }}"
+    state: yes
+    persistent: yes
+  with_items:
+    - "httpd_can_network_connect_db"
+    - "httpd_can_network_connect"
+  tags:
+  - odcs
+
 - name: modify selinux so that httpd can serve data from NFS shares if needed
   seboolean: 
     name: httpd_use_nfs
@@ -61,6 +72,27 @@
   when: "'enabled' in ansible_selinux.status"
   tags:
   - odcs
+
+- name: create local folders when nfs_create_local_folders is set
+  file:
+    path: "{{ item.path }}"
+    state: directory
+  loop: "{{ nfs_mounts }}"
+
+- name: mount filesystems
+  mount:
+    name: "{{ item.path }}"
+    src: "{{ item.src }}"
+    fstype: nfs
+    state: "{{ item.state|default('mounted') }}"
+    opts: "{{ item.opts }}"
+  with_items: "{{ nfs_mounts }}"
+  when:
+  - nfs_mounts|length > 0
+  - item.path is defined
+  - item.src is defined
+  - item.path
+  - item.src
 
 - name: create odcs-server group
   group:
