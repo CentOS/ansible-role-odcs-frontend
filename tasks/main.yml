@@ -25,6 +25,7 @@
   vars:
     packages:
     - odcs
+    - fus
     - mod_auth_gssapi
     - mod_wsgi
     - mod_ssl
@@ -128,6 +129,18 @@
     dest: /etc/odcs/config.py
     owner: odcs-server
     group: odcs-server
+    mode: 0440
+  notify:
+  - reload httpd service
+  tags:
+  - odcs
+
+- name: generate the ssl Apache config
+  template:
+    src: etc/httpd/conf.d/ssl.conf.j2
+    dest: /etc/httpd/conf.d/ssl.conf
+    owner: apache
+    group: apache
     mode: 0440
   notify:
   - reload httpd service
