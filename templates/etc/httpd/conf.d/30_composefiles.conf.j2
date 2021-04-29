@@ -1,0 +1,18 @@
+<VirtualHost *:80>
+ ServerAdmin webmaster@centos.org
+ ServerName {{ odcs_composefiles_hostname }}
+ CustomLog logs/composes.stream.centos.org_access.log combined
+ ErrorLog logs/composes.stream.centos.org_error.log
+ DocumentRoot {{ odcs_target_dir }}
+ AddDescription "{{ inventory_hostname }}" server.id
+ ReadmeName /centos-design/footer.html
+ HeaderName /centos-design/header-centos-mirror.html
+ IndexIgnore .??* *~ *# HEADER* README* RCS CVS *,v *,t FOOTER.html
+
+ Header set Cache-Control "max-age=500,public"
+
+ <FilesMatch "\.(rpm|iso|qcow2|img)>
+    Header set Cache-Control "max-age=172800,public"
+ </FilesMatch>
+
+</VirtualHost>

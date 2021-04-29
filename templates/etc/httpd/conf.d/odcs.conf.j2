@@ -1,3 +1,5 @@
+<VirtualHost *:80>
+ServerName {{ odcs_frontend_hostname }}
 # Force SSL
 RewriteEngine On
 # allow http access for zabbix status checks
@@ -7,8 +9,30 @@ RewriteCond %{REQUEST_URI} !^/composes.*
 RewriteCond %{HTTPS} off
 RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
 
+</VirtualHost>
+
+NameVirtualHost *:443
+SSLPassPhraseDialog exec:/usr/libexec/httpd-ssl-pass-dialog
+SSLSessionCache         shmcb:/run/httpd/sslcache(512000)
+SSLSessionCacheTimeout  300
+SSLRandomSeed startup file:/dev/urandom  256
+SSLRandomSeed connect builtin
+SSLCryptoDevice builtin
+SSLHonorCipherOrder on
+SSLProtocol all -SSLv3 -SSLv3
+
+SSLCipherSuite ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:+LOW:!aNULL:!eNULL:!DES:!MD5:!PSK:!RC4
+
+<VirtualHost *:443>
+ServerName {{ odcs_frontend_hostname }}
 WSGIDaemonProcess odcs user=odcs-server group=apache threads=5
 WSGIScriptAlias /{{ odcs_endpoint }} /usr/share/odcs/odcs.wsgi
+
+SSLEngine on
+
+SSLCertificateFile /etc/pki/tls/certs/{{ odcs_frontend_hostname }}.crt
+SSLCertificateKeyFile /etc/pki/tls/private/{{ odcs_frontend_hostname }}.key
+SSLCertificateChainFile /etc/pki/tls/certs/{{ odcs_frontend_ca_crt }}
 
 ErrorLog logs/ssl_error_log
 TransferLog logs/ssl_access_log
@@ -20,6 +44,7 @@ SSLVerifyClient none
 SSLCACertificateFile /etc/pki/tls/certs/fas-ca.crt
 SSLUserName SSL_CLIENT_S_DN_CN
 {% endif %}
+</VirtualHost>
 
 <Directory /usr/share/odcs>
     WSGIProcessGroup odcs
