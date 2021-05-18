@@ -5,8 +5,7 @@
  ErrorLog logs/composes.stream.centos.org_error.log
  DocumentRoot {{ odcs_target_dir }}
  AddDescription "{{ inventory_hostname }}" server.id
- ReadmeName /centos-design/footer.html
- HeaderName /centos-design/header-centos-mirror.html
+ HeaderName /centos-design/header-centos.html
  IndexIgnore .??* *~ *# HEADER* README* RCS CVS *,v *,t FOOTER.html
 
  Header set Cache-Control "max-age=500,public"
