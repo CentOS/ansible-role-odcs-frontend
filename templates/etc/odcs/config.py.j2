@@ -67,6 +67,9 @@ class ProdConfiguration(BaseConfiguration):
     AUTH_LDAP_SERVER = "{{ odcs_auth_ldap_server }}"
     AUTH_LDAP_GROUP_BASE = "{{ odcs_auth_ldap_group_base }}"
 
+    SECONDS_TO_LIVE = {{ odcs_seconds_to_live }}
+    MAX_SECONDS_TO_LIVE = {{ odcs_max_seconds_to_live }}
+
     MESSAGING_BACKEND = "{{ odcs_messaging_backend }}"
     MESSAGING_BROKER_URLS = {{ odcs_messaging_producer_broker_urls }}
     MESSAGING_CERT_FILE = "/etc/ssl/odcs/umb-client.crt"
