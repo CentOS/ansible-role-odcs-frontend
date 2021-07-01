@@ -106,6 +106,7 @@ Alias "/composes" "{{ odcs_target_dir }}"
     IndexOptions NameWidth=* FancyIndexing
     AddDescription "{{ inventory_hostname }}" server.id
     HeaderName /centos-design/header-centos.html
+    IndexIgnoreReset ON
     IndexIgnore *~ *# HEADER* README* RCS CVS *,v *,t FOOTER.html
 </Directory>
 

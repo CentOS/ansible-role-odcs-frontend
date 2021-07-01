@@ -6,6 +6,7 @@
  DocumentRoot {{ odcs_target_dir }}
  AddDescription "{{ inventory_hostname }}" server.id
  HeaderName /centos-design/header-centos.html
+ IndexIgnoreReset ON
  IndexIgnore *~ *# HEADER* README* RCS CVS *,v *,t FOOTER.html
 
  Header set Cache-Control "max-age=500,public"
