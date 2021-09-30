@@ -272,3 +272,15 @@
     state: started
   tags:
   - odcs
+
+
+- include_role:
+    name: vsftpd
+  vars:
+    vsftpd_anonymous: True
+    vsftpd_selinux_booleans:
+      - ftpd_full_access
+      - ftpd_use_nfs
+      - ftpd_use_passive_mode
+    vsftpd_anonymous_chroot: "{{ odcs_target_dir }}"
+  when: odcs_frontend_ftpd 

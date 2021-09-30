@@ -1,1 +1,6 @@
 # Defaults variables for role odcs-frontend
+
+# Do we need to expose composes over ftp ? 
+# If enabled we'll chroot directly anonymous user to the {{ odcs_target_dir }} other variables, so where composes are mounted over nfs
+# Default to False, so enable it on demand through ansible inventory
+odcs_frontend_ftpd: False
