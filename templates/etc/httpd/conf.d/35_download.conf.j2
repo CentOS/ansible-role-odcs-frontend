@@ -1,0 +1,14 @@
+<VirtualHost *:80>
+ ServerAdmin webmaster@centos.org
+ ServerName download.stream.rdu2.redhat.com
+ CustomLog logs/download.stream.rdu2.redhat.com combined
+ ErrorLog logs/download.stream.rdu2.redhat.com_error.log
+ DocumentRoot /mnt/centos
+ AddDescription "{{ inventory_hostname }}" server.id
+ HeaderName /centos-design/header-centos.html
+ IndexIgnoreReset ON
+ IndexIgnore *~ *# HEADER* README* RCS CVS *,v *,t FOOTER.html
+
+ Header set Cache-Control "max-age=500,public"
+
+</VirtualHost>
