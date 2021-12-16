@@ -10,5 +10,15 @@
  IndexIgnore *~ *# HEADER* README* RCS CVS *,v *,t FOOTER.html
 
  Header set Cache-Control "max-age=500,public"
-
+<Directory "/mnt/centos">
+    Options +Indexes
+    IndexOptions NameWidth=* FancyIndexing
+    AddDescription "{{ inventory_hostname }}" server.id
+    HeaderName /centos-design/header-centos.html
+    IndexIgnoreReset ON
+    IndexIgnore *~ *# HEADER* README* RCS CVS *,v *,t FOOTER.html
+    <RequireAny>
+        Require method GET
+    </RequireAny>
+</Directory>
 </VirtualHost>

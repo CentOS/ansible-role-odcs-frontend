@@ -145,6 +145,7 @@
   with_items:
     - odcs.conf
     - 30_composefiles.conf
+    - 35_download.conf
   notify:
   - reload httpd service
   tags:
