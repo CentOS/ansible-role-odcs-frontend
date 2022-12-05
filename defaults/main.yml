@@ -1,5 +1,9 @@
 # Defaults variables for role odcs-frontend
 
+# Specific rpm version for odcs to deploy
+odcs_pkg_version: 0.2.50-2
+
+
 # Do we need to expose composes over ftp ? 
 # If enabled we'll chroot directly anonymous user to the {{ odcs_target_dir }} other variables, so where composes are mounted over nfs
 # Default to False, so enable it on demand through ansible inventory

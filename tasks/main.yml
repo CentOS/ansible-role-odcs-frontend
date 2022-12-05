@@ -2,49 +2,28 @@
 
 ---
 
-- name: install the EPEL packages required for ODCS backend
-  package:
-    name: "epel-release"
-    state: present
+- name: Importing specific distro variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
   tags:
-  - odcs
+    - vars
 
-- name: Use the Fedora infra repo
-  copy:
-    src: infrastructure.repo
-    dest: /etc/yum.repos.d/infrastructure.repo
-    mode: 0644
-    owner: root
-    group: root
+- include_role:
+    name: baseline
+    tasks_from: buildtools_repo
+  tags:
+    - repo
 
 - name: install the packages required for ODCS
   package:
-    name: "{{ packages }}"
-    state: present
+    name: "{{ odcs_frontend_pkgs_list }}"
+    state: installed
     update_cache: yes
-  vars:
-    packages:
-    - odcs
-    - fus
-    - mod_auth_gssapi
-    - mod_wsgi
-    - mod_ssl
-    - python3-qpid-proton
-    - fedora-messaging
-    - python3-psycopg2
-  tags:
-  - odcs
-
-- name: install the latest ODCS package
-  package:
-    name: odcs
-    state: latest
-    update_cache: yes
-  when: odcs_upgrade
   notify:
-  - restart httpd service
-  tags:
-  - odcs
+    - restart httpd service
 
 - include_role:
     name: httpd
@@ -134,6 +113,7 @@
   - reload httpd service
   tags:
   - odcs
+  - config
 
 - name: generate the ODCS Apache configs
   template:
