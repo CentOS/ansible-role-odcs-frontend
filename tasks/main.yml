@@ -247,6 +247,17 @@
   tags:
   - odcs
 
+- name: Install the ODCS Cleanup systemd service
+  copy:
+    src: "odcs-celery-cleanup.service"
+    dest: "/etc/systemd/system/odcs-celery-cleanup.service"
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - odcs
+
+
 - name: start ODCS frontend
   systemd:
     name: httpd
@@ -254,6 +265,13 @@
   tags:
   - odcs
 
+- name: start the ODCS Cleanup service
+  systemd:
+    name: "odcs-celery-cleanup"
+    state: started
+    enabled: true
+  tags:
+    - odcs
 
 - include_role:
     name: vsftpd
