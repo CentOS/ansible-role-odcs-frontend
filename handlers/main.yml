@@ -8,3 +8,8 @@
 
 - name: reload httpd service
   action: service name=httpd state=reloaded
+
+- name: restart_odcs_celery_cleanup
+  service:
+    name: odcs-celery-cleanup
+    state: restarted

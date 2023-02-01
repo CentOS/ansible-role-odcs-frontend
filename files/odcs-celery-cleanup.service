@@ -6,7 +6,7 @@ After=network.target
 Type=Simple
 User=odcs-server
 Group=odcs-server
-ExecStart=/bin/sh -c '/usr/bin/celery-3 -A odcs.server.celery_tasks beat --loglevel=debug'
+ExecStart=/bin/sh -c '/usr/bin/celery-3 beat --workdir /tmp --loglevel=debug -A odcs.server.celery_tasks'
 
 [Install]
 WantedBy=multi-user.target

@@ -10,6 +10,7 @@
     - "{{ ansible_os_family }}.yml"
   tags:
     - vars
+    - always
 
 - include_role:
     name: baseline
@@ -254,8 +255,19 @@
     owner: root
     group: root
     mode: 0644
+  register: odcs_cleanup_systemd
+  notify: 
+    - restart_odcs_celery_cleanup
   tags:
     - odcs
+    - odcs-cleanup
+
+- name: Let systemd know about new odcs-cleanup
+  systemd:
+    daemon_reload: yes
+  when: odcs_cleanup_systemd is changed
+  tags:
+    - odcs-cleanup
 
 
 - name: start ODCS frontend
@@ -272,6 +284,7 @@
     enabled: true
   tags:
     - odcs
+    - odcs-cleanup
 
 - include_role:
     name: vsftpd
