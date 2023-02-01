@@ -1,0 +1,12 @@
+[Unit]
+Description=ODCS Celery Cleanup
+After=network.target
+
+[Service]
+Type=Simple
+User=odcs-server
+Group=odcs-server
+ExecStart=/bin/sh -c '/usr/bin/celery-3 -A odcs.server.celery_tasks beat --loglevel=debug'
+
+[Install]
+WantedBy=multi-user.target
