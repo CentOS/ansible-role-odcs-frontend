@@ -30,6 +30,8 @@
     name: httpd
   vars:
     - httpd_tls: True
+  tags:
+    - tls
 
 ########
 # Need to add the messaging part
@@ -203,7 +205,8 @@
   notify:
   - reload httpd service
   tags:
-  - odcs
+    - odcs
+    - tls
 
 - name: install the httpd TLS key
   copy:
@@ -215,7 +218,8 @@
   notify:
   - reload httpd service
   tags:
-  - odcs
+    - odcs
+    - tls
 
 - name: install any CAs
   copy:
@@ -227,7 +231,8 @@
   notify:
   - reload httpd service
   tags:
-  - odcs
+    - odcs
+    - tls
 
 - name: Disable PrivateTmp=true in httpd.service.
   lineinfile:
