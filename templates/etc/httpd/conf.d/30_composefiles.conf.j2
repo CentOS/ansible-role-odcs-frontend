@@ -5,7 +5,8 @@
  ErrorLog logs/composes.stream.centos.org_error.log
  DocumentRoot {{ odcs_target_dir }}
  AddDescription "{{ inventory_hostname }}" server.id
- HeaderName /centos-design/header-centos.html
+ ReadmeName /centos-design/footer.html
+ HeaderName /centos-design/header-centos-stream-composes.html
  IndexIgnoreReset ON
  IndexIgnore *~ *# HEADER* README* RCS CVS *,v *,t FOOTER.html
 

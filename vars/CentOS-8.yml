@@ -3,7 +3,7 @@ odcs_frontend_pkgs_list:
   - odcs-{{ odcs_pkg_version }}.el8
   - fus
   - mod_auth_gssapi
-  - mod_wsgi
+  - python3-mod_wsgi
   - mod_ssl
   - python3-qpid-proton
   - fedora-messaging

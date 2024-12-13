@@ -33,6 +33,14 @@
   tags:
     - tls
 
+- import_role:
+    name: httpd
+    tasks_from: custom-header
+  vars: 
+    - httpd_custom_header_page: "{{ odcs_header_page }}"
+  tags:
+    - theme
+
 ########
 # Need to add the messaging part
 
@@ -133,6 +141,7 @@
   - reload httpd service
   tags:
   - odcs
+  - theme
 
 - name: ODCS rabbitmq private queue TLS files
   copy:

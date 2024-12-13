@@ -5,7 +5,8 @@
  ErrorLog logs/download.stream.rdu2.redhat.com_error.log
  DocumentRoot /mnt/centos
  AddDescription "{{ inventory_hostname }}" server.id
- HeaderName /centos-design/header-centos.html
+ ReadmeName /centos-design/footer.html
+ HeaderName /centos-design/header-centos-stream-composes.html
  IndexIgnoreReset ON
  IndexIgnore *~ *# HEADER* README* RCS CVS *,v *,t FOOTER.html
 
@@ -14,7 +15,7 @@
     Options +Indexes
     IndexOptions NameWidth=* FancyIndexing
     AddDescription "{{ inventory_hostname }}" server.id
-    HeaderName /centos-design/header-centos.html
+    HeaderName /centos-design/header-centos-stream-composes.html
     IndexIgnoreReset ON
     IndexIgnore *~ *# HEADER* README* RCS CVS *,v *,t FOOTER.html
     <RequireAny>

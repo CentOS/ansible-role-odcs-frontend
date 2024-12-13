@@ -12,6 +12,18 @@ odcs_fedora_messaging_tls_file: centos-odcs
 # Should be found under {{ pkistore }}/rabbitmq-private
 odcs_rabbitmq_queue_tls_file: centos-odcs-private-queue
 
+# httpd header for frontend composes index
+odcs_header_page:
+  title: 'CentOS Stream Composes'
+  title_lead: ''
+  with_manifestation: 'CentOS Stream Composes'
+  with_content:
+    - element: p
+      element_class: alert alert-info
+      element_content: >-
+        Learn more about the "development" and "production" composes in the <a href="https://docs.centos.org/centos-stream-docs/release/">CentOS Stream release docs</a>.
+
+
 # Do we need to expose composes over ftp ? 
 # If enabled we'll chroot directly anonymous user to the {{ odcs_target_dir }} other variables, so where composes are mounted over nfs
 # Default to False, so enable it on demand through ansible inventory
